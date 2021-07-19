@@ -1,0 +1,23 @@
+[package]
+name = "vmss-prototype"
+version = "0.1.0"
+authors = ["Brook Tamir <t-brooktamir@microsoft.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+command = { path = "../command" }
+# runner = { path = "../runner" }
+#env_logger = "0.8"
+#log = "0.4"
+tokio = { version="1.3", features=["full"] }
+#pipe = "0.4"
+structopt = "0.3"
+failure = "0.1"
+readonly = "0.2.0"
+regex = "1.5.4"
+
+[dev-dependencies]
+#pretty_assertions = "0.6"
+tokio = { version="1.3", features=["full", "test-util"] }
