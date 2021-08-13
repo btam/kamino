@@ -74,7 +74,7 @@ pub struct CmdAutoUpdate {
     #[structopt(long, default_value = "0")]
     maximum_image_age: MaximumImageAge,
     
-    /// The name of nodes that should be ignored as potential prototype candidates
+    /// The names of nodes that should be ignored as potential prototype candidates
     #[structopt(long)]
     ignore_nodes: Option<Vec<NodeName>>,
     

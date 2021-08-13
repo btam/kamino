@@ -2,6 +2,7 @@ pub mod cluster_update {
     use std::str::FromStr;
     use failure::Fail;
     use regex::Regex;
+    use serde::{Deserialize, Serialize};
 
     #[derive(Debug, Fail)]
     pub enum ArgumentValidationError {
@@ -92,7 +93,7 @@ pub mod cluster_update {
         }
     }
 
-    #[derive(Debug)]
+    #[derive(Debug, Serialize, Deserialize)]
     pub struct NodeName(String);
 
     impl FromStr for NodeName {
@@ -104,6 +105,11 @@ pub mod cluster_update {
                 Ok(_) => Ok( Self(String::from_str(input).unwrap()) ),
                 _ => return Err(ArgumentValidationError::UnknownError)
             }
+        }
+    }
+    impl PartialEq for NodeName {
+        fn eq(&self, other: &Self) -> bool {
+            self.0 == other.0
         }
     }
 
@@ -288,11 +294,6 @@ pub mod cluster_update {
         format!("SIG_{0}", name.replace("-", "_"))
     }
 
-    /// Get the sorted list of VMSS that could be set to run prototype pattern
-    pub fn get_vmss_set() {
-        // TODO: fill in for status and auto-update
-    }
-
     #[cfg(test)]
     mod test {
         use super::*;
@@ -370,13 +371,38 @@ pub mod cluster_update {
             assert!(is_vmss_node("vmss0003ax").is_err());
         }
         #[test]
+        fn test_nodename_deserialization() {
+            // TODO: delete this if you don't use it
+            // assert!(NodeName::from_str("k8s-pool-131414-vmss0003ax"));
+            assert!(is_vmss_node("k8s-pool-131414-vmss000000").is_ok());
+            assert!(is_vmss_node("k8s-pool-131414-vmss999999").is_ok());
+            assert!(is_vmss_node("k8s-pool-131414-vmssaaaaaa").is_ok());
+            assert!(is_vmss_node("k8s-pool-131414-vmsszzzzzz").is_ok());
+            assert!(is_vmss_node("A-vmss0003ax").is_ok());
+            assert!(is_vmss_node("_-vmss0003az").is_ok());
+
+            // false/failure cases
+            assert!(is_vmss_node("k8s-pool-131414-Vmss0003aX").is_err());
+            assert!(is_vmss_node("k8s-pool-131414-vmss0003aX").is_err());
+            assert!(is_vmss_node("k8s-pool-131414-vmss//////").is_err());
+            assert!(is_vmss_node("k8s-pool-131414-vmss::::::").is_err());
+            assert!(is_vmss_node("k8s-pool-131414-vmss``````").is_err());
+            assert!(is_vmss_node("k8s-pool-131414-vmss{{{{{{").is_err());
+            assert!(is_vmss_node("A-vmss0003a").is_err());
+            assert!(is_vmss_node("A-vmss00003ax").is_err());
+            assert!(is_vmss_node("-vmss0003ax").is_err());
+            assert!(is_vmss_node("A-vmss0003a|").is_err());
+            assert!(is_vmss_node("Avmss0003ax").is_err());
+            assert!(is_vmss_node("vmss0003ax").is_err());
+        }
+        #[test]
         fn test_is_vmss_name() {
             assert!(is_vmss_name("k8s-pool-131414-vmss").is_ok());
             assert!(is_vmss_name("_-vmss").is_ok());
-            assert!(is_vmss_name("").is_ok());
             
             // false/failure cases
             assert!(is_vmss_name("-vmss").is_err());
+            assert!(is_vmss_name("").is_err());
             assert!(is_vmss_name("k8s-pool-131414-vMSs").is_err());
             assert!(is_vmss_name("Avmss").is_err());
             assert!(is_vmss_name("vmss").is_err());

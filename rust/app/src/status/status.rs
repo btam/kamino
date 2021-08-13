@@ -2,6 +2,7 @@ use structopt::StructOpt;
 use failure::Error;
 
 use crate::argument_types::cluster_update::SubscriptionId;
+use crate::node_selection;
 
 /// Show status of VMSS Prototype Pattern
 #[derive(Debug, StructOpt)]

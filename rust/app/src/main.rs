@@ -3,12 +3,15 @@ use std::process::exit;
 use structopt::StructOpt;
 mod command_line;
 mod argument_types;
+mod node_selection;
 use command_line::*;
 mod auto_update;
 mod status;
 mod update;
 
 fn main() {
+    env_logger::init();
+    
     let opt = CommandLine::from_args();
     println!("{:#?}", opt);
     
