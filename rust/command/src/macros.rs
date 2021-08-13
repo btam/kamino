@@ -208,31 +208,8 @@ impl<'a, T: AppendCmdImpl + ?Sized + 'a> AppendCmdImpl for MaskSecret<'a, T> {
 
 #[cfg(test)]
 mod test {
-    // use super::*;
     use pretty_assertions::assert_eq;
 
-    // #[test]
-    // #[should_panic]
-    // fn command_no_runner() {
-    //     let _ = command!(["echo", "hello world"]);
-    // }
-
-    // NOTE: in these tests we invoke command! via Runner for consistency with other tests, which use Runner.
-    // this is done because we can't use two different mechanism for handling SIGCHLD and will compete with each other.
-    /*
-    #[tokio::test]
-    async fn command_works() {
-        let out = Runner::new(None)
-            .run(
-                "command_works",
-                || Ok(command!(["echo", "hello world"])),
-                None,
-            )
-            .await
-            .expect("mus succeed");
-        assert_eq!(out, Ok(String::from("hello world\n")));
-    }
-    */
     #[test]
     fn command_works() {
         let out = command!(["echo", "hello world"]).expect("must succeed");
@@ -240,122 +217,12 @@ mod test {
         assert_eq!(out, String::from("hello world\n"));
     }
 
-    // #[tokio::test]
-    // async fn tuple_flattening() {
-    //     let out = Runner::new(None)
-    //         .run(
-    //             "command_works",
-    //             || Ok(command!(["echo", ("hello", "world"),])),
-    //             None,
-    //         )
-    //         .await
-    //         .expect("mus succeed");
-    //     assert_eq!(out, Ok(String::from("hello world\n")));
-    // }
-    
     #[test]
     fn tuple_flattening() {
         let out = command!(["echo", ("hello", "world"),]).expect("mus succeed");
         assert_eq!(out, String::from("hello world\n"));
     }
-
-    // TODO: make this synchronous
-    // #[tokio::test]
-    // async fn arrays_and_numbers() {
-    //     let out = Runner::new(None)
-    //         .run(
-    //             "command_works",
-    //             || {
-    //                 Ok(command!([
-    //                     "echo",
-    //                     ["hello", "world"],
-    //                     42,
-    //                     (3.14f32, 3usize)
-    //                 ]))
-    //             },
-    //             None,
-    //         )
-    //         .await
-    //         .expect("must succeed");
-    //     assert_eq!(out, Ok(String::from("hello world 42 3.14 3\n")));
-    // }
-
-    // #[tokio::test]
-    // async fn capturing_vars() {
-    //     let out = Runner::new(None)
-    //         .run(
-    //             "command_works",
-    //             || {
-    //                 let h = "hello";
-    //                 let b = &String::from("beautiful");
-    //                 let w = String::from("world");
-    //                 Ok(command!(["echo", h, b, w]))
-    //             },
-    //             None,
-    //         )
-    //         .await
-    //         .expect("must succeed");
-    //     assert_eq!(out, Ok(String::from("hello beautiful world\n")));
-    // }
-
-    // #[tokio::test]
-    // async fn skipping_optionals() {
-    //     let out = Runner::new(None)
-    //         .run(
-    //             "command_works",
-    //             || {
-    //                 let x: Option<i32> = None;
-    //                 let y = Some(123);
-    //                 Ok(command!(["echo", Some(("hello", "world")), x, y]))
-    //             },
-    //             None,
-    //         )
-    //         .await
-    //         .expect("must succeed");
-    //     assert_eq!(out, Ok(String::from("hello world 123\n")));
-    // }
-
-    // #[tokio::test]
-    // async fn mask_secret() {
-    //     let out = Runner::new(None)
-    //         .run(
-    //             "command_works",
-    //             || {
-    //                 let do_not_leak_this = "$up3r$3cr3t";
-    //                 Ok(command!([
-    //                     "echo",
-    //                     ("--secret", MaskSecret(do_not_leak_this))
-    //                 ]))
-    //             },
-    //             None,
-    //         )
-    //         .await
-    //         .expect("must succeed");
-    //     assert_eq!(out, Ok(String::from("--secret $up3r$3cr3t\n")));
-    // }
-
-    // #[tokio::test]
-    // async fn command_retry_works() {
-    //     let out = Runner::new(None)
-    //         .run(
-    //             "command_works",
-    //             || {
-    //                 Ok(command!(
-    //                     ["cat", "dummy"],
-    //                     CommandArgs {
-    //                         retries: 1,
-    //                         ..Default::default()
-    //                     }
-    //                 ))
-    //             },
-    //             None,
-    //         )
-    //         .await
-    //         .expect("must succeed");
-    //     assert!(out.is_err());
-    // }
 }
-
 /// For production code this is equivalent to thread::sleep()
 /// In unit test mode when virtual time is activated and process execution is faked,
 /// sleeping for retry doesn't achieve any differrent behavior and can't trigger new failures,
