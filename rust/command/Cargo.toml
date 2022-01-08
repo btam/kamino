@@ -1,0 +1,22 @@
+[package]
+name = "command"
+version = "0.1.0"
+authors = ["Eric Rivera <errivera@microsoft.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+failure = "0.1"
+futures = "0.3.14"
+log = "0.4"
+# removed because we don't plan to use it in Kamino
+# runner = { path = "../runner" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version="1.3", features=["full"] }
+tokio-util = { version="0.6", features=["codec"] }
+
+[dev-dependencies]
+pretty_assertions = "0.6"
+tokio = { version="1.3", features=["full", "test-util"] }
